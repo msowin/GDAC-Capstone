@@ -11,9 +11,6 @@ This is an optional capstone project for the [Google Data Analytics certificatio
 - Spring: This is a water bottle that tracks daily water intake using smart technology to ensure that you are appropriately hydrated throughout the day. The Spring bottle connects to the Bellabeat app to track your hydration levels.
 - Bellabeat membership: Bellabeat also offers a subscription-based membership program for users. Membership gives users 24/7 access to fully personalized guidance on nutrition, activity, sleep, health and beauty, and mindfulness based on their lifestyle and goals.
 
-### Tools
-1. SQL for data cleaning and analysis
-2. Tableau for data visualization
 
 This case study follows the 6 steps of the data analysis process:
 ### [ASK](#1-ask)
@@ -57,6 +54,18 @@ I am asked to analyze publically available FitBit data to gain insight into how 
   - Overall this data presents problems in it being a final source of truth, but it could still provide insights that would beneficial to investigate further or even take under consideration.
 
 ## 3. PROCESS
+### 3.1 Tools used
+- SQL for data cleaning and analysis
+- Tableau for visualization
+
+### 3.2 Cleaning data
+- Check and review nulls, remove duplicates, and ensure data is ready to analyze. This is done on 3 primary tables - dailyactivity, sleepday, and weightloginfo.
+```
+
+
+
+```
+
 ## 4. ANALYZE
 ## 5. SHARE
 ## 6. ACT
