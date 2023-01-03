@@ -16,7 +16,8 @@ I am asked to analyze publically available FitBit data to gain insight into how 
 3. How could these trends help influence Bellabeat marketing strategy?
 
 ### Tools
-MS SQL Server for data cleaning and analysis
+SQL for data cleaning and analysis
+Tableau for data visualization
 
 ### Data
 This data is publically available on [Kaggle](https://www.kaggle.com/datasets/arashnic/fitbit)
