@@ -1,6 +1,8 @@
 # GDAC-Capstone
 ## Case Study 2: How can a wellness Technology Company play it smart?
 
+![Bellabeat](https://www.google.com/url?sa=i&url=https%3A%2F%2Fbellabeat.com%2F&psig=AOvVaw3raRudTZlu1kAMnkrmIB8X&ust=1672861641710000&source=images&cd=vfe&ved=0CA8QjRxqFwoTCMifi7GVrPwCFQAAAAAdAAAAABAE)
+
 ### Bellabeat
 This is an optional capstone project for the [Google Data Analytics certification](https://www.coursera.org/professional-certificates/google-data-analytics) through Coursera.
 
@@ -21,3 +23,13 @@ Tableau for data visualization
 
 ### Data
 This data is publically available on [Kaggle](https://www.kaggle.com/datasets/arashnic/fitbit)
+
+
+This case study follows the 6 steps of the data analysis process:
+
+1. ASK
+2. PREPARE
+3. PROCESS
+4. ANALYZE
+5. SHARE
+6. ACT
