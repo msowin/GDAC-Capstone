@@ -41,17 +41,25 @@ I am asked to analyze publically available FitBit data to gain insight into how 
 
 ## 2. PREPARE
   ### 2.1 - Data set
-  - This data is publically available on [Kaggle](https://www.kaggle.com/datasets/arashnic/fitbit). This data set contains 18 tables in CSV format, housing data from       30 users. The 30 eligible FitBit users consented to submission of personal tracker data.
+  This data is publically available on [Kaggle](https://www.kaggle.com/datasets/arashnic/fitbit). This data set contains 18 tables in CSV format, housing data from       30 users. The 30 eligible FitBit users consented to submission of personal tracker data.
+  
+  Upon reviewing the tables, I found that the dailyActivitiesMerged table consists of combined data from dailyCaloriesMerged, dailyIntensitiesMerged, and dailyStepsMerged. With this in mind we can use the dailyActivitiesMerged table for our analysis and disregard these other tables.
+  
+  In reviewing other tables such as heartrate_seconds_merged and weightLogInfoMerged, there were only 14 and 8 different IDs, and therefor not a large enough sample size to continue analysis. After this review I landed on 4 main tables for my analysis:
+  -  dailyActivity_merged
+  -  sleepDay_merged 
+  -  hourlyIntensity_merged
+  -  hourlySteps_merged
     
   ### 2.2 - Does the data ROCCC?
   - Reliable - This data alone is not reliable, as the sample size of 30 users is not large enough to infer conclusions regarding the millions of smart fitness device users worldwide.
   - Original - This data is not original. It was supplied from a survey via Amazon Mechanical Turk, and not from FitBit themselves. 
-  - Comprehensive - This data is not comprehensive. It would be better if it contained more data from more users, including things like height and weight, to perform a more robust analysis.
+  - Comprehensive - This data is not comprehensive. It would be better if it contained more data from more users to perform a more robust analysis.
   - Current - This data is not current. It was gathered over a 2 month period in the Spring of 2016.
-  - Cited - This data is cited - it came from Amazon Mechanical Turk via survey.
+  - Cited - This data is cited - it came from Amazon Mechanical Turk via survey. There are no privacy concerns as it is open source and the users consented to sharing their data.
 
   ### 2.3 Problems with the data
-  - The Central Limit Theorem's general role of n >= 30 is met here, however a larger sample size would be desirable. As mentioned, data is available for only 30 users over a 2 month period. 
+  - The Central Limit Theorem's general role of n >= 30 is met here on the tables I chose, however a larger sample size would be desirable. 
   - While reviewing the data, there are only 8 users who inputted data for weight. Of those 8 users, 5 inputted weight manually while 3 provided this data through some other device.
   - Overall this data presents problems in it being a final source of truth, but it could still provide insights that would beneficial to investigate further or even take under consideration.
 
@@ -61,13 +69,57 @@ I am asked to analyze publically available FitBit data to gain insight into how 
 - Tableau for visualization
 
 ### 3.2 Cleaning data
-- Check and review nulls, remove duplicates, and ensure data is ready to analyze. This is done on 3 primary tables - dailyactivity, sleepday, and weightloginfo.
+- Check and review nulls, remove duplicates, and ensure data is ready to analyze. This is done on the 4 tables selected.
 ```
+--repeated for each column, discovered there are no nulls in the 4 tables.
+select COLNAME
+from TABLE
+where COLNAME IS NULL
 
+--discovering duplicates in tables
+select id
+,	count(distinct(ActivityDate)) AS dupeCheck
+from dailyActivity_merged
+group by ActivityDate, id
+order by dupeCheck desc
 
-
+--converting datatypes on a table
+select Id
+, cast(activitydate as date) AS newDate
+, cast(totalSteps AS int) AS newTotalSteps
+, cast(calories as smallint) AS newCalories
+, round(totaldistance, 3) AS newTotalDistance
+, round(trackerdistance, 3) AS newTrackerDistance
+, round(LoggedActivitiesDistance, 3) AS newLoggedActivitiesDistance
+, round(VeryActiveDistance, 3) AS newVeryActiveDistance
+, round(ModeratelyActiveDistance, 3) AS newModeratelyActiveDistance
+, round(LightActiveDistance, 3) AS newLightActiveDistance
+, round(SedentaryActiveDistance, 3) AS newSedentaryActiveDistance
+from [dbo].[dailyActivity_merged]
 ```
+From here I felt confident that the data was ready to analyze.
 
 ## 4. ANALYZE
+
+I began by finding the average steps, overall, from the data
+```
+--finding the overall average steps per id
+select id
+, avg(cast(totalsteps as int)) as avgSteps
+from dailyActivity_merged
+group by id
+```
+Which resulted in 
+
+I then wanted to see what percentage of time in bed was categorized by sleep
+```
+select id
+, cast(SleepDay as date) as newDate
+, totalminutesasleep
+, totaltimeinbed
+, cast(TotalMinutesAsleep as float) / TotalTimeInBed as percentSleep
+from sleepDay_merged
+```
+
 ## 5. SHARE
 ## 6. ACT
