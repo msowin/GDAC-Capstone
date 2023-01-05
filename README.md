@@ -177,25 +177,69 @@ From here I felt confident that the data was ready to analyze.
 
 ## 4. ANALYZE
 
-I began by finding the average steps, overall, from the data
+I began by performing a few aggregate functions on the tables
 ```
---finding the overall average steps per id
-select id
-, avg(cast(totalsteps as int)) as avgSteps
-from dailyActivity_merged
-group by id
-```
-Which resulted in 
+--finding the overall average steps
+SELECT AVG(TotalSteps) AS AvgSteps
+FROM dailyActivity_merged
 
-I then wanted to see what percentage of time in bed was categorized by sleep
+--finding the overall average steps per ID
+SELECT ID
+, AVG(TotalSteps) AS AvgSteps
+FROM dailyActivity_merged
+GROUP BY ID
+
+--finding average distance, per activity level by ID
+SELECT ID
+, AVG(VeryActiveDistance) AS AvgVeryActiveDist
+, AVG(ModeratelyActiveDistance) AS AvgModActiveDist
+, AVG(LightActiveDistance) AS AvgLightActiveDist
+, AVG(SedentaryActiveDistance) AS AvgSedActiveDist
+FROM dailyActivity_merged
+GROUP BY ID
+
+--finding average minutes per activity level, by ID
+SELECT ID
+, AVG(VeryActiveMinutes) AS AvgVeryActiveMinutes
+, AVG(FairlyActiveMinutes) AS AvgModMinutes
+, AVG(LightlyActiveMinutes) AS AvgLightMinutes
+, AVG(SedentaryMinutes) AS AvgSedMinutes
+FROM dailyActivity_merged
+GROUP BY ID
+
+--finding any relation between total steps in a day and total minutes asleep on that day
+SELECT sd.ID
+, ActivityDate
+, TotalSteps
+, TotalMinutesAsleep
+FROM sleepDay_merged AS sd
+INNER JOIN dailyActivity_merged AS da
+ON sd.id = da.id
+AND da.ActivityDate = sd.SleepDay
+
+--finding the total steps per day/hour of the entire group
+SELECT ActivityHour
+,SUM(StepTotal) AS TotalSteps
+FROM hourlySteps_merged
+WHERE StepTotal >0
+GROUP BY ActivityHour
+ORDER BY totalsteps desc
+
+--finding the average minutes asleep of the group
+SELECT AVG(totalminutesasleep) AS totalSleepMinutes
+FROM sleepDay_merged
+
+--finding the average minutes per activity level overall
+SELECT AVG(sedentaryminutes) AS AvgSedMin
+, AVG(lightlyactiveminutes) AS AvgLightMin
+, AVG(FairlyActiveMinutes) AS AvgFairMin
+, AVG(VeryActiveMinutes) AS AvgVeryActiveMin
+FROM dailyActivity_merged
 ```
-select id
-, cast(SleepDay as date) as newDate
-, totalminutesasleep
-, totaltimeinbed
-, cast(TotalMinutesAsleep as float) / TotalTimeInBed as percentSleep
-from sleepDay_merged
-```
+I found a few insights from this analysis. The average user in this data set is taking 7,637 steps per day, which is below the recommended 10,000 steps to be considered active. On average, the users in this dataset slept 6.98 hours per night, which is near but lower than the recommended 7 hours per night (https://www.cdc.gov/sleep/about_sleep/how_much_sleep.html).
+
+Additionally, I found 991 average sedentary minutes in the group, by far the largest activity level logged. I also created a visualization of when during the day most activity occurs. I also discovered that heaviest tracking was done Tuesday-Thursday, with drop offs of tracking info over the weekends during the survey.
 
 ## 5. SHARE
+[Link to Tableau Dashboard](https://public.tableau.com/app/profile/matt.sowin/viz/GDACCapstone_16729407337290/GDACdashboard)
 ## 6. ACT
