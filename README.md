@@ -69,34 +69,110 @@ I am asked to analyze publically available FitBit data to gain insight into how 
 - Tableau for visualization
 
 ### 3.2 Cleaning data
-- Check and review nulls, remove duplicates, and ensure data is ready to analyze. This is done on the 4 tables selected.
+- Check and remove duplicates. is is done on the 4 tables selected.
 ```
---repeated for each column, discovered there are no nulls in the 4 tables.
-select COLNAME
-from TABLE
-where COLNAME IS NULL
+--finding duplicates in sleepDay_merged - yields 3 duplicates
+select sd.*
+FROM (
+	SELECT id, sleepday
+	FROM sleepDay_merged
+	GROUP BY id, sleepday
+	HAVING count(*) > 1) AS nsd
+INNER JOIN  sleepDay_merged AS sd
+ON sd.id = nsd.id
+AND sd.sleepday = nsd.sleepday
 
---discovering duplicates in tables
-select id
-,	count(distinct(ActivityDate)) AS dupeCheck
-from dailyActivity_merged
-group by ActivityDate, id
-order by dupeCheck desc
+--finding duplicates in dailyActivity_merged - none found
+select da.*
+FROM (
+	SELECT id, activitydate
+	FROM dailyActivity_merged
+	GROUP BY id, ActivityDate
+	HAVING count(*) > 1) AS nda
+INNER JOIN  dailyActivity_merged AS da
+ON da.id = nda.id
+AND da.ActivityDate = nda.ActivityDate
 
---converting datatypes on a table
-select Id
-, cast(activitydate as date) AS newDate
-, cast(totalSteps AS int) AS newTotalSteps
-, cast(calories as smallint) AS newCalories
-, round(totaldistance, 3) AS newTotalDistance
-, round(trackerdistance, 3) AS newTrackerDistance
-, round(LoggedActivitiesDistance, 3) AS newLoggedActivitiesDistance
-, round(VeryActiveDistance, 3) AS newVeryActiveDistance
-, round(ModeratelyActiveDistance, 3) AS newModeratelyActiveDistance
-, round(LightActiveDistance, 3) AS newLightActiveDistance
-, round(SedentaryActiveDistance, 3) AS newSedentaryActiveDistance
-from [dbo].[dailyActivity_merged]
+--finding duplicates in hourlyIntensities_merged - none found
+select hi.*
+FROM (
+	SELECT id, activityhour
+	FROM hourlyIntensities_merged
+	GROUP BY id, Activityhour
+	HAVING count(*) > 1) AS nhi
+INNER JOIN  hourlyIntensities_merged AS hi
+ON hi.id = nhi.id
+AND hi.Activityhour = nhi.Activityhour
+
+--finding duplicates in hourlySteps_merged -- none found
+select hs.*
+FROM (
+	SELECT id, activityhour
+	FROM hourlySteps_merged
+	GROUP BY id, Activityhour
+	HAVING count(*) > 1) AS nhs
+INNER JOIN  hourlySteps_merged AS hs
+ON hs.id = nhs.id
+AND hs.Activityhour = nhs.Activityhour
 ```
+This shows that one table, sleepDay_merged, has 3 duplicates that will now be removed. I will do this with a CTE
+```
+---deleting the 3 duplicate entries. 3 rows affected.
+WITH CTE (id
+	, sleepday
+	, totalsleeprecords
+	, totalminutesasleep
+	, totaltimeinbed
+	, dupecount)
+AS (SELECT id
+		, sleepday
+		, totalsleeprecords
+		, totalminutesasleep
+		, totaltimeinbed
+		, ROW_NUMBER() OVER(PARTITION BY id
+			, sleepday
+			, totalsleeprecords
+			, totalminutesasleep
+			, totaltimeinbed
+			ORDER BY id) AS dupecount
+	FROM sleepDay_merged)
+DELETE FROM CTE
+WHERE dupecount >1
+```
+In reviewing the data I noticed data types are often incorrect (e.g, dates would be strings, not date). I want to cast these correctly before moving into analysis.
+```
+---correcting data types in dailyActivities_merged
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN ActivityDate date;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN TotalSteps int;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN TotalDistance float;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN TrackerDistance float;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN LoggedActivitiesDistance float;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN VeryActiveDistance float;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN ModeratelyActiveDistance float;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN LightActiveDistance float;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN SedentaryActiveDistance float;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN VeryActiveMinutes int;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN FairlyActiveMinutes int;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN LightlyActiveMinutes int;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN SedentaryMinutes int;
+ALTER TABLE dailyActivity_merged
+ALTER COLUMN Calories int;
+```
+The other 3 tables had appropriate data types.
+
 From here I felt confident that the data was ready to analyze.
 
 ## 4. ANALYZE
