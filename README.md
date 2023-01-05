@@ -242,4 +242,11 @@ Additionally, I found 991 average sedentary minutes in the group, by far the lar
 
 ## 5. SHARE
 [Link to Tableau Dashboard](https://public.tableau.com/app/profile/matt.sowin/viz/GDACCapstone_16729407337290/GDACdashboard)
+
 ## 6. ACT
+### 6.1 Final Conclusion
+Based on my analysis of the public FitBit data provided, I found that on average, users underperform on recommendations regarding steps per day and hours of sleep per night. Bellabeat could find a way to incentivize a healthy lifestyle with this in mind. Additionally, there is a drop off of activity logged over weekends. I'm unsure if this is due to not wearing the device over the weekend, so finding a way to incentivize utilizing the tool all the time to get the most of it. 
+
+With this I would recommend a few things to Bellabeat's marketing team:
+- create push notifications to remind users to exercise in some way, especially during times determined to be lower than average. This should also be done on weekends as that's where the largest drop off occurs. 
+- create benchmarks in the app around recommended steps per day based on weight loss goals, and remind users of how they are tracking against their goals. 
