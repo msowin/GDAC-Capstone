@@ -117,7 +117,7 @@ AND hs.Activityhour = nhs.Activityhour
 ```
 This shows that one table, sleepDay_merged, has 3 duplicates that will now be removed. I will do this with a CTE
 ```
----deleting the 3 duplicate entries. 3 rows affected.
+--deleting the 3 duplicate entries. 3 rows affected.
 WITH CTE (id
 	, sleepday
 	, totalsleeprecords
@@ -139,7 +139,7 @@ AS (SELECT id
 DELETE FROM CTE
 WHERE dupecount >1
 ```
-In reviewing the data I noticed data types are often incorrect (e.g, dates would be strings, not date). I want to cast these correctly before moving into analysis.
+In reviewing the data I noticed data types are often incorrect (e.g, dates would be strings, not date). I want to alter the data types to be the correct format before moving into analysis.
 ```
 ---correcting data types in dailyActivities_merged
 ALTER TABLE dailyActivity_merged
